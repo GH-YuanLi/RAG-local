@@ -1,26 +1,33 @@
-embedding:
-  model_name: BAAI/bge-small-zh-v1.5
-  device: cpu
-  hf_endpoint: https://hf-mirror.com
-
-llm:
-  provider: anthropic
-  api_base: https://api.z.ai/api/anthropic
-  api_key: 02bb30f7384a4824bb2c6ab345120aed.90Wj4k5ui705q3QE
-  model_name: glm-4.7
-
-chunking:
-  chunk_size: 512
-  chunk_overlap: 64
-  separators: ["\n\n", "\n", "。", "！", "？", ".", " "]
-
-vectorstore:
-  persist_directory: ./vectordb
-  collection_name: documents
-
-retrieval:
-  top_k: 4
-
 app:
   host: 0.0.0.0
   port: 7860
+chunking:
+  chunk_overlap: 64
+  chunk_size: 512
+  separators:
+  - '
+
+
+    '
+  - '
+
+    '
+  - 。
+  - ！
+  - ？
+  - .
+  - ' '
+embedding:
+  device: cpu
+  hf_endpoint: https://hf-mirror.com
+  model_name: BAAI/bge-small-zh-v1.5
+llm:
+  api_base: https://api.minimaxi.com/anthropic
+  api_key: sk-api-1LdPFZtlhNK-FCngiza_LAImvEbjE472xuDSVYlhIlwgJ-J_y_-nYgzRFqY_l0vyIi_BnvLRlR95d9kWpfyYn24cf4iXtyS9a2ldsItMS5YreuW4x5dHPw4
+  model_name: MiniMax-M2.7
+  provider: anthropic
+retrieval:
+  top_k: 4
+vectorstore:
+  collection_name: documents
+  persist_directory: ./vectordb

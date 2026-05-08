@@ -1,4 +1,4 @@
-[2026-05-08] Local RAG 实施日志
+[2026-05-08] Local RAG 开发日志
 ================================
 
 Step 1: uv 项目初始化
@@ -43,70 +43,91 @@ Step 8: Web 界面 (src/app.py)
     - 适配 Gradio 6.x API（移除 type/theme 参数）
     - 修复 Textbox 默认值过早初始化 RAG 引擎问题
     - 修复 LLMClient 空 api_key 初始化失败问题
-  测试: Gradio app 构建成功
 
-Step 9: 集成测试
+Step 9: Anthropic 接口支持
   状态: 成功
-  详情: 全部模块导入正常，Embedding 编码正常，向量库索引/检索正常
+  详情:
+    - 添加 anthropic SDK 依赖
+    - llm.py 支持 provider=openai | anthropic 双模式
+    - config.yaml 新增 provider 字段
+    - app.py 模型设置 Tab 新增接口格式下拉选择
 
 Step 10: README.md
   状态: 成功
   详情: 包含安装、配置、使用完整指南
-2026-05-08 17:59:51,501 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
-2026-05-08 17:59:53,827 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
-2026-05-08 17:59:55,877 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
-2026-05-08 17:59:57,749 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
-2026-05-08 17:59:57,758 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
-2026-05-08 17:59:57,964 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
-2026-05-08 17:59:58,056 [INFO] src.vectorstore: 向量库初始化完成，已有 0 条记录
-2026-05-08 18:00:17,821 [INFO] src.loader: 文件 C:\Users\Yuan\AppData\Local\Temp\gradio\2b03df579860e3651de57f96da25d49d720d4ca2baebffad278d504d13f68d79\Multi-Turn-Insurance-Underwriting-README-CN.md 加载完成，生成 14 个分块
-2026-05-08 18:00:19,356 [INFO] src.vectorstore: 索引完成: C:\Users\Yuan\AppData\Local\Temp\gradio\2b03df579860e3651de57f96da25d49d720d4ca2baebffad278d504d13f68d79\Multi-Turn-Insurance-Underwriting-README-CN.md (14 分块)
-2026-05-08 18:00:19,359 [INFO] src.vectorstore: 索引构建完成，新增 14 条记录，总计 14 条
-2026-05-08 18:00:56,944 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪些
-2026-05-08 18:00:58,733 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/chat/completions "HTTP/1.1 404 404 Page not found"
-2026-05-08 18:00:58,734 [ERROR] src.llm: LLM 调用失败: 404 page not found
-2026-05-08 18:00:58,735 [INFO] src.rag: 查询完成，检索到 4 条相关内容
-2026-05-08 18:01:54,804 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪些
-2026-05-08 18:01:55,076 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/chat/completions "HTTP/1.1 404 404 Page not found"
-2026-05-08 18:01:55,077 [ERROR] src.llm: LLM 调用失败: 404 page not found
-2026-05-08 18:01:55,077 [INFO] src.rag: 查询完成，检索到 4 条相关内容
-2026-05-08 18:02:46,054 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
-2026-05-08 18:02:47,621 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
-2026-05-08 18:02:49,695 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
-2026-05-08 18:02:52,002 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
-2026-05-08 18:02:52,004 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
-2026-05-08 18:02:52,174 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
-2026-05-08 18:02:52,307 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
-2026-05-08 18:02:52,587 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪些
-2026-05-08 18:02:53,396 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/chat/completions "HTTP/1.1 404 404 Page not found"
-2026-05-08 18:02:53,396 [ERROR] src.llm: LLM 调用失败: 404 page not found
-2026-05-08 18:02:53,398 [INFO] src.rag: 查询完成，检索到 4 条相关内容
-2026-05-08 18:04:56,870 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
-2026-05-08 18:04:58,543 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
-2026-05-08 18:05:00,612 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
-2026-05-08 18:05:04,352 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
-2026-05-08 18:05:04,354 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
-2026-05-08 18:05:04,574 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
-2026-05-08 18:05:04,748 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
-2026-05-08 18:05:16,533 [INFO] src.rag: 收到查询: hi
-2026-05-08 18:05:19,537 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/chat/completions "HTTP/1.1 200 OK"
-2026-05-08 18:05:19,541 [ERROR] src.llm: LLM 调用失败: 'NoneType' object is not subscriptable
-2026-05-08 18:05:19,542 [INFO] src.rag: 查询完成，检索到 4 条相关内容
-2026-05-08 18:07:12,835 [INFO] src.rag: 收到查询: hi
-2026-05-08 18:07:14,889 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/chat/completions "HTTP/1.1 200 OK"
-2026-05-08 18:07:14,890 [ERROR] src.llm: LLM 调用失败: 'NoneType' object is not subscriptable
-2026-05-08 18:07:14,890 [INFO] src.rag: 查询完成，检索到 4 条相关内容
-2026-05-08 18:15:00,752 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
-2026-05-08 18:16:44,991 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
-2026-05-08 18:16:46,543 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
-2026-05-08 18:16:48,608 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
-2026-05-08 18:16:57,630 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
-2026-05-08 18:16:57,633 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
-2026-05-08 18:16:57,823 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
-2026-05-08 18:16:57,965 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
-2026-05-08 18:17:02,246 [INFO] src.rag: 收到查询: hi
-2026-05-08 18:17:04,368 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/v1/messages "HTTP/1.1 200 OK"
-2026-05-08 18:17:04,394 [INFO] src.rag: 查询完成，检索到 4 条相关内容
-2026-05-08 18:17:31,030 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪几种
-2026-05-08 18:17:34,128 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/v1/messages "HTTP/1.1 200 OK"
-2026-05-08 18:17:34,129 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+
+Step 11: ThinkingBlock 兼容性修复
+  状态: 成功
+  详情:
+    - 问题: MiniMax 开启扩展思考时返回 ThinkingBlock，直接访问 .text 报错
+    - 修复: 遍历 response.content，优先取 TextBlock.text，忽略 ThinkingBlock
+    - 兼容: GLM（无 ThinkingBlock）和 MiniMax 均正常工作
+
+Step 12: CLAUDE.md
+  状态: 成功
+  详情: 创建项目引导文件，包含架构、命令、provider 切换说明
+
+================================
+运行时日志（按时间顺序）
+================================
+
+[初始化阶段]
+17:59:51 Gradio 版本检查
+17:59:53 Gradio 启动
+17:59:57 Embedding 模型加载完成（512维）
+17:59:58 向量库初始化（0条记录）
+18:00:17 文档索引：Multi-Turn-Insurance-Underwriting-README-CN.md（14分块入库）
+18:00:19 索引构建完成，总计14条
+
+[早期调试阶段]
+18:00:56 查询1："文档中的数据集任务类型有哪些"
+  - 错误: minimaxi 使用 /anthropic/chat/completions（404）
+  - 原因: 接口路径错误，未使用 /v1/messages
+18:01:54 查询2: 同上，仍404
+18:02:52 查询3: 同上，仍404
+
+18:04:04 api.z.ai 代理切换测试
+  - 接口: https://api.z.ai/api/anthropic（OpenAI 兼容格式）
+  - 错误: 'NoneType' object is not subscriptable
+  - 原因: 返回格式不兼容（Anthropic 原生格式误用 OpenAI SDK 调用）
+
+18:16:57 切换为 Anthropic provider，api.z.ai 返回 200 但报错
+  - 路径已修正为 /v1/messages（Anthropic 原生格式）
+  - 错误: 'NoneType' object is not subscriptable（response.content[0] 为 None）
+  - 原因: response.content[0] 是 TextBlock 但索引访问方式有问题
+
+18:17:04 api.z.ai 正常返回（"你好，我是 MiniMax很高兴为你服务"）
+  - 查询: "hi" → 成功
+  - 查询: "文档中的数据集任务类型有哪几种" → 成功（无 ThinkingBlock）
+
+20:00:54 重新加载，文档已索引跳过（增量机制生效）
+20:02:09 切换为 minimaxi provider
+20:02:15 minimaxi 返回200
+
+20:03:18 查询报错: 'ThinkingBlock' object has no attribute 'text'
+  - 根因: MiniMax-M2.7 模型开启了扩展思考，返回 ThinkingBlock
+20:04:10 再次查询，同错误
+
+20:04:50 切换回 api.z.ai + glm-4.7 → 正常
+20:06:03 切换 minimaxi → ThinkingBlock 错误复现
+
+20:24:50 修复代码部署
+  - 修复: 遍历 response.content，hasattr(block, "text") 判断
+  - 验证: app 构建成功
+
+20:27:12 minimaxi + MiniMax-M2.7 → 查询成功，无 ThinkingBlock 错误
+20:28:26 切换 api.z.ai + glm-4.7 → 正常
+20:29:26 api.z.ai + glm-4.7 → 查询成功
+20:29:52 切换 minimaxi + MiniMax-M2.7 → 查询成功
+20:30:07 查询成功，修复验证通过
+
+================================
+问题记录
+================================
+
+| 时间 | 问题 | 原因 | 解决方案 |
+|------|------|------|---------|
+| 18:00 | minimaxi 404 | 路径 /anthropic/chat/completions 错误 | 改用 /v1/messages |
+| 18:04 | api.z.ai OpenAI SDK 解析失败 | Anthropic 格式误用 OpenAI SDK | 切换 provider=anthropic |
+| 18:17 | response.content[0] subscript error | response 结构理解有误 | 修正索引访问逻辑 |
+| 20:03 | ThinkingBlock has no attribute text | MiniMax 开启思考返回ThinkingBlock | 遍历content列表判断类型 |

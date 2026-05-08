@@ -63,7 +63,11 @@ class LLMClient:
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_message}],
         )
-        return response.content[0].text
+        texts = []
+        for block in response.content:
+            if hasattr(block, "text") and block.text:
+                texts.append(block.text)
+        return "\n".join(texts) if texts else "模型未返回有效内容"
 
     def test_connection(self) -> tuple[bool, str]:
         try:
@@ -73,7 +77,11 @@ class LLMClient:
                     max_tokens=10,
                     messages=[{"role": "user", "content": "hi"}],
                 )
-                return True, f"连接成功，模型回复: {response.content[0].text}"
+                reply = next(
+                    (b.text for b in response.content if hasattr(b, "text")),
+                    "无文本内容",
+                )
+                return True, f"连接成功，模型回复: {reply}"
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": "hi"}],
