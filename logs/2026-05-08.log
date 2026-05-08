@@ -130,4 +130,16 @@ Step 12: CLAUDE.md
 | 18:00 | minimaxi 404 | 路径 /anthropic/chat/completions 错误 | 改用 /v1/messages |
 | 18:04 | api.z.ai OpenAI SDK 解析失败 | Anthropic 格式误用 OpenAI SDK | 切换 provider=anthropic |
 | 18:17 | response.content[0] subscript error | response 结构理解有误 | 修正索引访问逻辑 |
-| 20:03 | ThinkingBlock has no attribute text | MiniMax 开启思考返回ThinkingBlock | 遍历content列表判断类型 |
+| 20:03 | ThinkingBlock has no attribute text | MiniMax 开启思考返回ThinkingBlock | 遍历content列表判断类型 |2026-05-08 20:39:16,847 [INFO] src.rag: 收到查询: hi
+2026-05-08 20:39:23,719 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/v1/messages "HTTP/1.1 200 OK"
+2026-05-08 20:39:23,719 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 20:45:14,763 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-05-08 20:45:16,292 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-05-08 20:45:18,343 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-05-08 20:45:18,878 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
+2026-05-08 20:45:18,878 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
+2026-05-08 20:45:19,053 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
+2026-05-08 20:45:19,192 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
+2026-05-08 20:45:19,476 [INFO] src.rag: 收到查询: hi
+2026-05-08 20:45:24,154 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/v1/messages "HTTP/1.1 200 OK"
+2026-05-08 20:45:24,177 [INFO] src.rag: 查询完成，检索到 4 条相关内容
