@@ -1,0 +1,112 @@
+[2026-05-08] Local RAG 实施日志
+================================
+
+Step 1: uv 项目初始化
+  状态: 成功
+  详情:
+    - uv init 完成，Python 3.12.10
+    - pyproject.toml 配置完成
+    - 7 个核心依赖及 112 个子依赖全部安装到项目虚拟空间 (.venv)
+    - 目录结构已创建: src/, data/raw/, vectordb/, logs/
+    - config.yaml 配置文件已创建
+
+Step 2: 配置加载模块 (src/config.py)
+  状态: 成功
+  详情: load_config / save_config 实现完成
+
+Step 3: 文档加载与分块模块 (src/loader.py)
+  状态: 成功
+  详情: 支持 PDF/DOCX/TXT/MD，自定义 RecursiveCharacterTextSplitter，测试通过
+
+Step 4: Embedding 封装模块 (src/embedder.py)
+  状态: 成功
+  详情:
+    - 使用 BAAI/bge-small-zh-v1.5 本地模型
+    - 通过 hf-mirror.com 镜像下载模型至 models/ 目录
+    - 测试结果: 512维, 编码速度 ~0.08s/2条
+
+Step 5: 向量库操作模块 (src/vectorstore.py)
+  状态: 成功
+  详情: ChromaDB 持久化，增量索引（文件 hash 去重），检索测试通过
+
+Step 6: LLM 客户端模块 (src/llm.py)
+  状态: 成功
+  详情: OpenAI 兼容接口，支持运行时切换，空 api_key 兼容处理
+
+Step 7: RAG 主流程模块 (src/rag.py)
+  状态: 成功
+  详情: 检索+生成流程完整，返回来源信息
+
+Step 8: Web 界面 (src/app.py)
+  状态: 成功（经修复）
+  修复:
+    - 适配 Gradio 6.x API（移除 type/theme 参数）
+    - 修复 Textbox 默认值过早初始化 RAG 引擎问题
+    - 修复 LLMClient 空 api_key 初始化失败问题
+  测试: Gradio app 构建成功
+
+Step 9: 集成测试
+  状态: 成功
+  详情: 全部模块导入正常，Embedding 编码正常，向量库索引/检索正常
+
+Step 10: README.md
+  状态: 成功
+  详情: 包含安装、配置、使用完整指南
+2026-05-08 17:59:51,501 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-05-08 17:59:53,827 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-05-08 17:59:55,877 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-05-08 17:59:57,749 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
+2026-05-08 17:59:57,758 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
+2026-05-08 17:59:57,964 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
+2026-05-08 17:59:58,056 [INFO] src.vectorstore: 向量库初始化完成，已有 0 条记录
+2026-05-08 18:00:17,821 [INFO] src.loader: 文件 C:\Users\Yuan\AppData\Local\Temp\gradio\2b03df579860e3651de57f96da25d49d720d4ca2baebffad278d504d13f68d79\Multi-Turn-Insurance-Underwriting-README-CN.md 加载完成，生成 14 个分块
+2026-05-08 18:00:19,356 [INFO] src.vectorstore: 索引完成: C:\Users\Yuan\AppData\Local\Temp\gradio\2b03df579860e3651de57f96da25d49d720d4ca2baebffad278d504d13f68d79\Multi-Turn-Insurance-Underwriting-README-CN.md (14 分块)
+2026-05-08 18:00:19,359 [INFO] src.vectorstore: 索引构建完成，新增 14 条记录，总计 14 条
+2026-05-08 18:00:56,944 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪些
+2026-05-08 18:00:58,733 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/chat/completions "HTTP/1.1 404 404 Page not found"
+2026-05-08 18:00:58,734 [ERROR] src.llm: LLM 调用失败: 404 page not found
+2026-05-08 18:00:58,735 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 18:01:54,804 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪些
+2026-05-08 18:01:55,076 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/chat/completions "HTTP/1.1 404 404 Page not found"
+2026-05-08 18:01:55,077 [ERROR] src.llm: LLM 调用失败: 404 page not found
+2026-05-08 18:01:55,077 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 18:02:46,054 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-05-08 18:02:47,621 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-05-08 18:02:49,695 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-05-08 18:02:52,002 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
+2026-05-08 18:02:52,004 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
+2026-05-08 18:02:52,174 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
+2026-05-08 18:02:52,307 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
+2026-05-08 18:02:52,587 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪些
+2026-05-08 18:02:53,396 [INFO] httpx: HTTP Request: POST https://api.minimaxi.com/anthropic/chat/completions "HTTP/1.1 404 404 Page not found"
+2026-05-08 18:02:53,396 [ERROR] src.llm: LLM 调用失败: 404 page not found
+2026-05-08 18:02:53,398 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 18:04:56,870 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-05-08 18:04:58,543 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-05-08 18:05:00,612 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-05-08 18:05:04,352 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
+2026-05-08 18:05:04,354 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
+2026-05-08 18:05:04,574 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
+2026-05-08 18:05:04,748 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
+2026-05-08 18:05:16,533 [INFO] src.rag: 收到查询: hi
+2026-05-08 18:05:19,537 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/chat/completions "HTTP/1.1 200 OK"
+2026-05-08 18:05:19,541 [ERROR] src.llm: LLM 调用失败: 'NoneType' object is not subscriptable
+2026-05-08 18:05:19,542 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 18:07:12,835 [INFO] src.rag: 收到查询: hi
+2026-05-08 18:07:14,889 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/chat/completions "HTTP/1.1 200 OK"
+2026-05-08 18:07:14,890 [ERROR] src.llm: LLM 调用失败: 'NoneType' object is not subscriptable
+2026-05-08 18:07:14,890 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 18:15:00,752 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-05-08 18:16:44,991 [INFO] httpx: HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-05-08 18:16:46,543 [INFO] httpx: HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-05-08 18:16:48,608 [INFO] httpx: HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-05-08 18:16:57,630 [INFO] src.embedder: 正在加载 embedding 模型: E:\claude-code\RAG\models\bge-small-zh-v1.5 (设备: cpu)
+2026-05-08 18:16:57,633 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from E:\claude-code\RAG\models\bge-small-zh-v1.5.
+2026-05-08 18:16:57,823 [INFO] src.embedder: Embedding 模型加载完成，维度: 512
+2026-05-08 18:16:57,965 [INFO] src.vectorstore: 向量库初始化完成，已有 14 条记录
+2026-05-08 18:17:02,246 [INFO] src.rag: 收到查询: hi
+2026-05-08 18:17:04,368 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/v1/messages "HTTP/1.1 200 OK"
+2026-05-08 18:17:04,394 [INFO] src.rag: 查询完成，检索到 4 条相关内容
+2026-05-08 18:17:31,030 [INFO] src.rag: 收到查询: 文档中的数据集任务类型有哪几种
+2026-05-08 18:17:34,128 [INFO] httpx: HTTP Request: POST https://api.z.ai/api/anthropic/v1/messages "HTTP/1.1 200 OK"
+2026-05-08 18:17:34,129 [INFO] src.rag: 查询完成，检索到 4 条相关内容

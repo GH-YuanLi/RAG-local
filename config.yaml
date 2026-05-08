@@ -1,0 +1,26 @@
+embedding:
+  model_name: BAAI/bge-small-zh-v1.5
+  device: cpu
+  hf_endpoint: https://hf-mirror.com
+
+llm:
+  provider: anthropic
+  api_base: https://api.z.ai/api/anthropic
+  api_key: 02bb30f7384a4824bb2c6ab345120aed.90Wj4k5ui705q3QE
+  model_name: glm-4.7
+
+chunking:
+  chunk_size: 512
+  chunk_overlap: 64
+  separators: ["\n\n", "\n", "。", "！", "？", ".", " "]
+
+vectorstore:
+  persist_directory: ./vectordb
+  collection_name: documents
+
+retrieval:
+  top_k: 4
+
+app:
+  host: 0.0.0.0
+  port: 7860
