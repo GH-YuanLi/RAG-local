@@ -26,7 +26,7 @@ snapshot_download('BAAI/bge-small-zh-v1.5', local_dir='models/bge-small-zh-v1.5'
 
 ```
 src/app.py          # Gradio Web 界面入口
-src/rag.py          # RAG 主流程（检索 + 生成）
+src/rag.py          # RAG 主流程（检索 + 生成 + 对话记忆）
 src/llm.py          # LLM 客户端（openai / anthropic 双模式）
 src/vectorstore.py  # ChromaDB 向量库（索引 + 检索）
 src/embedder.py     # 本地 Embedding（sentence-transformers）
@@ -35,6 +35,16 @@ src/config.py       # YAML 配置加载
 ```
 
 核心流程：`query` → embed → vectorstore.query → llm.chat → response
+
+## 对话记忆机制
+
+`rag.py` 的 `query()` 方法支持 `history` 参数，实现会话内多轮对话：
+
+- `chat_query()` 接收 Gradio 的 `history` 列表并传递给 `rag.query()`
+- `_truncate_history()` 限制历史长度（最近 6 轮），防止 token 溢出
+- `_format_history()` 将历史格式化为 `用户：...` / `助手：...` 文本
+- 格式化后的历史作为前置上下文拼接到当前问题之前
+- 仅支持会话内记忆，刷新页面会重置历史
 
 ## LLM Provider 切换
 

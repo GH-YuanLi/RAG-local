@@ -36,23 +36,31 @@ class LLMClient:
         self._init_client()
         logger.info("LLM 配置已更新: provider=%s, base=%s, model=%s", self.provider, api_base, model_name)
 
-    def chat(self, query: str, context: str) -> str:
+    def chat(self, query: str, context: str, history: list | None = None) -> str:
         user_message = f"参考资料：\n{context}\n\n问题：{query}"
         try:
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+
+            if history:
+                for item in history:
+                    role = item.get("role", "user")
+                    content = item.get("content", "")
+                    if role in ("user", "assistant"):
+                        messages.append({"role": role, "content": content})
+
+            messages.append({"role": "user", "content": user_message})
+
             if self.provider == "anthropic":
                 return self._chat_anthropic(user_message)
-            return self._chat_openai(user_message)
+            return self._chat_openai(messages)
         except Exception as e:
             logger.error("LLM 调用失败: %s", e)
             return f"LLM 调用失败: {e}"
 
-    def _chat_openai(self, user_message: str) -> str:
+    def _chat_openai(self, messages: list) -> str:
         response = self.client.chat.completions.create(
             model=self.model_name,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_message},
-            ],
+            messages=messages,
         )
         return response.choices[0].message.content
 

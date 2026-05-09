@@ -98,7 +98,7 @@ def chat_query(message: str, history: list) -> str:
     if not message.strip():
         return "请输入问题"
     rag = get_rag()
-    result = rag.query(message)
+    result = rag.query(message, history=history)
     answer = result["answer"]
     if result["sources"]:
         src_text = "\n".join(
